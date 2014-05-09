@@ -13,6 +13,7 @@
         "doctrine/doctrine-module": "dev-master",
         "doctrine/orm": "v2.4.2",
         "zendframework/zend-developer-tools": "dev-master",
-        "doctrine/doctrine-orm-module": "dev-master"
+        "doctrine/doctrine-orm-module": "dev-master",
+        "cderue/googlemaps": "dev-master"
     }
 }
