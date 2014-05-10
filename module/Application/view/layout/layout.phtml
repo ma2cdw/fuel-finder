@@ -26,14 +26,14 @@
         ; ?>
         
         <script type="text/javascript">
+            var map;
             function initialise()
             {
                 var mapOptions = {
                     center: new google.maps.LatLng( -34.397, 150.644 ),
                     zoom: 8
                 };
-                var map = new google.maps.Map( document.getElementById("map"),
-                                               mapOptions );
+                map = new google.maps.Map( document.getElementById( "map" ), mapOptions );
             }
             $( 'document' ).ready(
                 function()
@@ -52,7 +52,13 @@
                                                function( index, value )
                                                {
                                                    $( "#results" ).append( $( '<li/>', { 'text': value.formatted_address } ) );
-                                                   console.log( value );
+                                                   map.fitBounds(new google.maps.LatLngBounds(
+                                                                        new google.maps.LatLng( value.geometry.bounds.southwest.lat, value.geometry.bounds.southwest.lng ),
+                                                                        new google.maps.LatLng( value.geometry.bounds.northeast.lat, value.geometry.bounds.northeast.lng ) )
+                                                                  );
+                                                    console.log( value.geometry.bounds );
+                                                   console.log( map.getBounds().toString() );
+                                                          
                                                }
                                         )
                                    }
@@ -79,7 +85,7 @@
         </nav>
         <div class="body">
             <div class="sidebar">
-                <div><?php echo $this->form( $this->geolocationForm ) ?></div>
+                <div><?php //echo $this->form( $this->geolocationForm ) ?></div>
                 <div>
                     <ul id="results"></ul>
                 </div>
