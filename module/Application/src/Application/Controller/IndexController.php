@@ -75,7 +75,6 @@ class IndexController extends AbstractActionController
         $this->p_map->addObject( $directions );
         die( print_r( $this->p_map->getDirections() ) );
         $result = array();
-        return new JsonModel( $result );
-        
+        return new JsonModel( $result );        
     }
 }

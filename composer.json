@@ -17,6 +17,7 @@
         "cderue/googlemaps": "dev-master",
         "creof/doctrine2-spatial": "dev-master",
         "phayes/geophp": "dev-master",
-        "php-google-maps/php-google-maps": "dev-master"
+        "php-google-maps/php-google-maps": "dev-master",
+        "league/csv": "dev-master"
     }
 }

@@ -37,6 +37,21 @@ class PetrolStation
 
     public function setName( $name )
     {
-        $this->s_name= $name;
+        if( !is_string( $name ) )
+        {
+            throw new \InvalidArgumentException( 'name parameter must be a string' );
+        }
+        
+        $this->s_name = $name;
+    }
+    
+    public function getLocation()
+    {
+        return $this->s_location;
+    }
+    
+    public function setLocation( \CrEOF\Spatial\PHP\Types\Geography\Point $location )
+    {
+        $this->s_location = $location;
     }
 }

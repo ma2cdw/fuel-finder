@@ -37,5 +37,32 @@ class PetrolStationRepository extends ORM\EntityRepository
                         ->getQuery()
                         ->getResult();
     }
+    
+    public function loadData( $filePath )
+    {
+        if( !is_string( $filePath ) )
+        {
+            throw new \InvalidArgumentException( "filename must be a string" );
+        }
+        
+        $validator = new \Zend\Validator\File\Exists( $filePath );
+        
+        if( !$validator->isValid( $filePath ) )
+        {
+            throw new \InvalidArgumentException( "file dosn't exist" );
+        }
+        
+        $csvReader = new \League\Csv\Reader( $filePath );
+        $csvReader->setOffset( 4 );
+        foreach( $csvReader as $row )
+        {
+            $location = new \CrEOF\Spatial\PHP\Types\Geography\Point( $row[0], $row[1] );
+            $petrolSation = new \Application\Model\Entity\PetrolStation;
+            $petrolStation->setLocation( $location );
+            $petrolSation->setName( $row[2] );
+            $this->_em->persist( $petrolStation );
+        }
+        $this->_em->flush();
+    }
 }
 
