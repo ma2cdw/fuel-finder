@@ -71,8 +71,9 @@ class IndexController extends AbstractActionController
     public function directionsAction()
     {
         $directions = new \PHPGoogleMaps\Service\DrivingDirections( 'HU6 8JL', 'HG1 5AN' );
-        $this->p_map( $directions );
-        die( print_r( $directions ) );
+        die( $directions->route() );
+        $this->p_map->addObject( $directions );
+        die( print_r( $this->p_map->getDirections() ) );
         $result = array();
         return new JsonModel( $result );
         

@@ -27,7 +27,7 @@ return array(
             'application' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/application[/:action]',
+                    'route'    => '[/:action]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Index',
