@@ -23,6 +23,16 @@ class GeoLocationForm extends Form
                 'label' => 'Address',
             ),
         ) );
+        $this->add( array(
+            'name' => 'radius',
+            'attributes' => array(
+                'type'  => 'text',
+                'required' => 'required',
+            ),
+            'options' => array(
+                'label' => 'Radius',
+            ),
+        ) );
         $this->add(array(
             'name' => 'submit',
             'attributes' => array(
@@ -42,6 +52,19 @@ class GeoLocationForm extends Form
             $inputFilter->add( array(
                 'name'     => 'address',
                 'required' => true,
+            ) );
+            
+            $inputFilter->add( array(
+                'name'     => 'radius',
+                'required' => true,
+                'validators' => array(
+                    array(
+                        'name'    => 'GreaterThan',
+                        'options' => array(
+                            'min'      => 0,
+                        ),
+                    ),
+                ),
             ) );
 
             $this->p_inputFilter = $inputFilter;

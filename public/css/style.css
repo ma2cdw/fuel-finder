@@ -42,12 +42,14 @@ div.container a.brand {
 }
 
 div.body {
-    height: 100%
+    height: 100%;
+    padding: 0px 10px 0px 10px;
 }
 
 div.sidebar {
     width: 25%;
     float: left;
+    height: 100%;
 }
 
 div.main {
@@ -58,4 +60,19 @@ div.main {
 
 #map {
     height:100%
+}
+
+table {
+    width: 100%;
+    column-count: 3;
+    display: block;
+}
+
+th {
+    width: 30%;
+}
+
+tbody {
+    overflow: scroll;
+    height: 100%;
 }

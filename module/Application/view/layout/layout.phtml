@@ -27,6 +27,7 @@
         
         <script type="text/javascript">
             var map;
+            var markers = Array();
             function initialise()
             {
                 var mapOptions = {
@@ -35,6 +36,56 @@
                 };
                 map = new google.maps.Map( document.getElementById( "map" ), mapOptions );
             }
+            
+            function positionMap( sw, ne )
+            {
+                map.fitBounds( new google.maps.LatLngBounds(
+                        new google.maps.LatLng( sw.lat, sw.lng ),
+                        new google.maps.LatLng( ne.lat, ne.lng ) )
+                );
+            }
+            
+            function getStations( lat, lng, radius )
+            {
+                var location = { 'lat': lat, 'lng': lng, 'buffer': radius };
+                var directionsService = new google.maps.DirectionsService();
+                $.get( '/petrolstations',
+                       $.param( location ),
+                       function( data )
+                       {
+                           var bounds = map.getBounds();
+                           $.each( data,
+                                   function( index1, pStation )
+                                   {
+                                       var start = new google.maps.LatLng( lat, lng );
+                                       var latLng = new google.maps.LatLng( pStation[0].s_location.lat, pStation[0].s_location.lng );
+                                       var request = { origin :start, destination: latLng, travelMode: google.maps.TravelMode.DRIVING };
+                                       var distance = '';
+                                       $( '#petrol tbody' ).append(
+                                               $( '<tr/>', { id: 'station_' + pStation[0].s_id } ).append( $( '<td/>',
+                                                                       { 'text': pStation[0].s_name } ) )
+                                                           .append( $( '<td/>',
+                                                                       { 'text': pStation.distance } ) )
+                                                           
+                                        );
+                                       directionsService.route( request,
+                                                                function( result, status )
+                                                                {
+                                                                    $( '#station_' + pStation[0].s_id ).append( $( '<td/>',
+                                                                       { 'text': result.routes[0].legs[0].distance.value / 1000 } ) );
+                                                                } );
+                                       
+                                       var marker = new google.maps.Marker( { 'title': pStation[0].s_name, 'position': latLng, 'map': map } );
+                                       markers.push( marker );                                       
+                                       bounds.extend( latLng );
+                                       
+                                   }
+                            );
+                            map.fitBounds( bounds );
+                       }                                                                               
+                );
+            }
+            
             $( 'document' ).ready(
                 function()
                 {
@@ -43,24 +94,50 @@
                         function( event )
                         {
                             $( '#results' ).empty();
+                            $( '#petrol tbody' ).empty();
+                            $.each( markers,
+                                    function( index, marker )
+                                    {
+                                        marker.setMap( null );
+                                    }
+                            );
+                            markers = Array();
                             event.preventDefault();
                             $.get( $( this ).attr( 'action' ),
                                    $( this ).serializeArray(),
                                    function( data )
-                                   {
-                                       $.each( data.results,
-                                               function( index, value )
-                                               {
-                                                   $( "#results" ).append( $( '<li/>', { 'text': value.formatted_address } ) );
-                                                   map.fitBounds(new google.maps.LatLngBounds(
-                                                                        new google.maps.LatLng( value.geometry.bounds.southwest.lat, value.geometry.bounds.southwest.lng ),
-                                                                        new google.maps.LatLng( value.geometry.bounds.northeast.lat, value.geometry.bounds.northeast.lng ) )
-                                                                  );
-                                                    console.log( value.geometry.bounds );
-                                                   console.log( map.getBounds().toString() );
-                                                          
-                                               }
-                                        )
+                                   {                                       
+                                       if( data.results.length === 1 )
+                                       {
+                                           positionMap( data.results[0].geometry.bounds.southwest, data.results[0].geometry.bounds.northeast );
+                                           $( "#results" ).append( $( '<li/>',
+                                                                      { 'text': data.results[0].formatted_address } )
+                                                                    .click( function( event )
+                                                                            {
+                                                                                getStations( value.geometry.location.lat, value.geometry.location.lng, $( 'input[name=radius]' ).val() );                                                                        
+                                                                            }
+                                                                    )
+                                                           );
+                                       }
+                                       else
+                                       {
+                                            $.each( data.results,
+                                                function( index, value )
+                                                {
+                                                    $( "#results" ).append(
+                                                            $( '<li/>',
+                                                               { 'text': value.formatted_address } )
+                                                            .click( function( event )
+                                                                    {
+                                                                        positionMap( value.geometry.bounds.southwest, value.geometry.bounds.northeast );
+                                                                        $( this ).siblings().remove();
+                                                                        getStations( value.geometry.location.lat, value.geometry.location.lng, $( 'input[name=radius]' ).val() );                                                                        
+                                                                    }
+                                                            )
+                                                    );
+                                                }
+                                            );
+                                        }
                                    }
                             );
                         }
@@ -85,9 +162,23 @@
         </nav>
         <div class="body">
             <div class="sidebar">
-                <div><?php //echo $this->form( $this->geolocationForm ) ?></div>
+                <div><?php echo $this->form( $this->geolocationForm ) ?></div>
                 <div>
+                    <h3>Point of interest</h3>
+                    <p>( if more than one result click on the one you require )</p>
                     <ul id="results"></ul>
+                    <h3>Petrol Stations</h3>                    
+                    <table id="petrol">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Distance (km) </th>
+                                <th>Travel distance (km)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>                    
                 </div>
             </div>
             <div class="main">

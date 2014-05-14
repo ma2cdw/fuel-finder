@@ -16,6 +16,7 @@ use Zend\View\Model\JsonModel;
 use GoogleMaps\Geocoder;
 use geoPHP;
 use PHPGoogleMaps\Service;
+use CrEOF\Spatial\PHP\Types\Geography\Point;
 
 class IndexController extends AbstractActionController
 {
@@ -41,12 +42,11 @@ class IndexController extends AbstractActionController
         $repository = $this->getServiceLocator()
                            ->get( 'Doctrine\ORM\EntityManager' )
                            ->getRepository( 'Application\Model\Entity\PetrolStation' );
-        $route = new \LineString( array( new \Point( 0, 53.7874508 ), new \Point( -1, 53.7874508 ) ) );
-        $petrolStations = $repository->findPetrolStationsOnRoute( $route, 21 );
-        print_r( $petrolStations );
-        $result = array();
-        return new JsonModel( $result );
         
+        $params = $this->params()->fromQuery();
+        $location = new \CrEOF\Spatial\PHP\Types\Geography\Point( array( $params['lng'], $params['lat'] ) );
+        $petrolStations = $repository->findPetrolStationsWithInRadius( $location, $params['buffer'] );
+        return new JsonModel( $petrolStations );
     }
     
     public function locationAction()
@@ -68,13 +68,13 @@ class IndexController extends AbstractActionController
         return new JsonModel( $result );
     }
     
-    public function directionsAction()
+    public function importAction()
     {
-        $directions = new \PHPGoogleMaps\Service\DrivingDirections( 'HU6 8JL', 'HG1 5AN' );
-        die( $directions->route() );
-        $this->p_map->addObject( $directions );
-        die( print_r( $this->p_map->getDirections() ) );
-        $result = array();
-        return new JsonModel( $result );        
+        $filePath = $this->getRequest()->getParam( 'path' );
+
+        $repository = $this->getServiceLocator()
+                           ->get( 'Doctrine\ORM\EntityManager' )
+                           ->getRepository( 'Application\Model\Entity\PetrolStation' );
+        $repository->loadData( $filePath );
     }
 }

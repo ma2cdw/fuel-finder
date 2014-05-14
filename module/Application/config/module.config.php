@@ -84,7 +84,16 @@ return array(
     'console' => array(
         'router' => array(
             'routes' => array(
-            ),
+                'import' => array(
+                    'options' => array(
+                        'route'    => 'import <path>',
+                        'defaults' => array(
+                            'controller' => 'Application\Controller\Index',
+                            'action'     => 'import'
+                        )
+                    )
+                )
+            )
         ),
     ),
 );

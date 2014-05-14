@@ -37,6 +37,13 @@ class Module
         $entityManager->getConfiguration()->addCustomNumericFunction('mbrdisjoint', 'CrEOF\Spatial\ORM\Query\AST\Functions\MySql\MBRDisjoint');
         $entityManager->getConfiguration()->addCustomStringFunction('startpoint', 'CrEOF\Spatial\ORM\Query\AST\Functions\MySql\StartPoint');
         $entityManager->getConfiguration()->addCustomStringFunction('within', 'CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Within');
+        $entityManager->getConfiguration()->addCustomStringFunction('acos', 'CrEOF\Spatial\ORM\Query\AST\Functions\MySql\ACos');
+        $entityManager->getConfiguration()->addCustomStringFunction('sin', 'CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Sin');
+        $entityManager->getConfiguration()->addCustomStringFunction('cos', 'CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Cos');
+        $entityManager->getConfiguration()->addCustomStringFunction('x', 'CrEOF\Spatial\ORM\Query\AST\Functions\MySql\X');
+        $entityManager->getConfiguration()->addCustomStringFunction('y', 'CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Y');
+        $entityManager->getConfiguration()->addCustomStringFunction('radians', 'CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Radians');
+        $entityManager->getConfiguration()->addCustomHydrationMode( 'PetrolStationHydrator', 'Application\Model\Hydrator\PetrolStationHydrator');
     }
 
     public function getConfig()
