@@ -13,6 +13,7 @@ class GeoLocationForm extends Form
         // we want to ignore the name passed
         parent::__construct( 'geolocation' );
         $this->setAttribute( 'method', 'get' );
+        // add address field
         $this->add( array(
             'name' => 'address',
             'attributes' => array(
@@ -23,6 +24,7 @@ class GeoLocationForm extends Form
                 'label' => 'Address',
             ),
         ) );
+        // add radius field
         $this->add( array(
             'name' => 'radius',
             'attributes' => array(
@@ -33,6 +35,7 @@ class GeoLocationForm extends Form
                 'label' => 'Radius',
             ),
         ) );
+        // add submit button
         $this->add(array(
             'name' => 'submit',
             'attributes' => array(
@@ -43,17 +46,20 @@ class GeoLocationForm extends Form
         ) );
     }
     
+    // greate filters for vaildation
     public function getInputFilter()
     {
         if( !$this->p_inputFilter )
         {
             $inputFilter = new InputFilter();
-
+            
+            // address is required
             $inputFilter->add( array(
                 'name'     => 'address',
                 'required' => true,
             ) );
             
+            // radius must be greater than 0
             $inputFilter->add( array(
                 'name'     => 'radius',
                 'required' => true,

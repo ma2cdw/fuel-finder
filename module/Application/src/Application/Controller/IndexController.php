@@ -29,6 +29,10 @@ class IndexController extends AbstractActionController
         $this->p_map = new \PHPGoogleMaps\Map();
     }
     
+    /**
+     * root of the application set sets up the map and form;
+     * @return \Zend\View\Model\ViewModel
+     */
     public function indexAction()
     {
         $this->p_form->setAttribute( 'action', $this->url()->fromRoute( 'application', array( 'action' => 'location' ) ) );
@@ -37,6 +41,10 @@ class IndexController extends AbstractActionController
         return new ViewModel();
     }
     
+    /** returns a list of petrol staions within a given radius
+     * 
+     * @return \Zend\View\Model\JsonModel
+     */
     public function petrolStationsAction()
     {
         $repository = $this->getServiceLocator()
@@ -49,6 +57,11 @@ class IndexController extends AbstractActionController
         return new JsonModel( $petrolStations );
     }
     
+    /**
+     * returns a geocoded location from google location request
+     * as json
+     * @return \Zend\View\Model\JsonModel
+     */
     public function locationAction()
     {
         $params = $this->params()->fromQuery();
@@ -56,7 +69,7 @@ class IndexController extends AbstractActionController
         $result = array();
         if( $this->p_form->isValid() )
         {
-            $geoCoder = new \GoogleMaps\Geocoder;
+            $geoCoder = new \GoogleMaps\Geocoder();
             $geoCodeRequest = new \GoogleMaps\Request;
             $geoCodeRequest->setAddress( $params['address'] );
             $result = $geoCoder->geocode( $geoCodeRequest )->getRawBody();
@@ -68,6 +81,9 @@ class IndexController extends AbstractActionController
         return new JsonModel( $result );
     }
     
+    /**
+     * imports garmin csv files into petrolstation table on database
+     */
     public function importAction()
     {
         $filePath = $this->getRequest()->getParam( 'path' );

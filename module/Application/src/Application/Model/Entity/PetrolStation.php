@@ -37,6 +37,7 @@ class PetrolStation
 
     public function setName( $name )
     {
+        // throw exception if string not passed
         if( !is_string( $name ) )
         {
             throw new \InvalidArgumentException( 'name parameter must be a string' );

@@ -20,9 +20,18 @@ class PetrolStationRepository extends ORM\EntityRepository
     {
         parent::__construct( $em, $class );
     }
+    /**
+     * 
+     * @param \CrEOF\Spatial\PHP\Types\Geography\Point $location
+     * @param type $buffer
+     * @return type
+     * @throws \InvalidArgumentException
+     */
     
+    //* finds all stations within buffer zone order by distance
     public function findPetrolStationsWithinRadius( \CrEOF\Spatial\PHP\Types\Geography\Point $location, $buffer )
     {
+        // throw exception if buffer not a number or greater than 0
         if( !is_numeric( $buffer ) || $buffer <= 0 )
         {
             throw new \InvalidArgumentException( "buffer parameter must be a number greater than zero" );
@@ -39,13 +48,23 @@ class PetrolStationRepository extends ORM\EntityRepository
         return $query->getResult( 'PetrolStationHydrator' );
     }
     
+    /**
+     * imports csv file data to table
+     * @param type $filePath
+     * @throws \InvalidArgumentException
+     */
+    
     public function loadData( $filePath )
     {
+        /**
+         * throw exception if not passed a string
+         */
         if( !is_string( $filePath ) )
         {
             throw new \InvalidArgumentException( "filename must be a string" );
         }
         
+        // throw exception if file dosn't exist
         $validator = new \Zend\Validator\File\Exists();
         if( !$validator->isValid( $filePath ) )
         {
