@@ -76,3 +76,7 @@ tbody {
     overflow: scroll;
     height: 100%;
 }
+
+#results li{
+    cursor: pointer;
+}
